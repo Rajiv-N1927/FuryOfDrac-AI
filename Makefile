@@ -14,19 +14,20 @@ LIBS =
 
 all : $(BINS)
 
-dracula : dracPlayer.o dracula.o DracView.o $(OBJS) $(LIBS)
-hunter : hunterPlayer.o hunter.o HunterView.o $(OBJS) $(LIBS)
+dracula : dracPlayer.o dracula.o DracView.o Queue.o $(OBJS) $(LIBS)
+hunter : hunterPlayer.o hunter.o HunterView.o Queue.o $(OBJS) $(LIBS)
 
-dracPlayer.o : player.c Game.h DracView.h dracula.h
+dracPlayer.o : player.c Game.h DracView.h dracula.h Queue.h
 	$(CC) $(CFLAGS) -DI_AM_DRACULA -c player.c -o dracPlayer.o
 
-hunterPlayer.o : player.c Game.h HunterView.h hunter.h
+hunterPlayer.o : player.c Game.h HunterView.h hunter.h Queue.h
 	$(CC) $(CFLAGS) -c player.c -o hunterPlayer.o
 
 dracula.o : dracula.c Game.h DracView.h
 hunter.o : hunter.c Game.h HunterView.h
 Places.o : Places.c Places.h
 Map.o : Map.c Map.h Places.h
+Queue.o  : Queue.c Queue.h
 GameView.o : GameView.c Globals.h GameView.h
 HunterView.o : HunterView.c Globals.h HunterView.h
 DracView.o : DracView.c Globals.h DracView.h
@@ -34,4 +35,3 @@ DracView.o : DracView.c Globals.h DracView.h
 
 clean :
 	rm -f $(BINS) *.o core
-

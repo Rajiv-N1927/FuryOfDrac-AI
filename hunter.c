@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "Game.h"
 #include "HunterView.h"
+#include "Queue.h"
 
 void decideHunterMove(HunterView gameState)
 {
