@@ -1,24 +1,9 @@
-// dracula.c
-// Implementation of your "Fury of Dracula" Dracula AI
-
-#include <stdlib.h>
-#include <stdio.h>
-#include "Game.h"
-#include "Map.h"
-#include "DracView.h"
-#include "Queue.h"
-
-#define MAX_NO_CONN 9
-int isUnique(int *arr, int obj);
-void shortestPath(DracView gameState, int dest, int *path);
-int sizePath( int src, int dest, LocationID *pathFound );
-int ret(int src, int dest, LocationID *pathFound, int *pathToAdd);
-
-void decideDraculaMove(DracView gameState)
-{
-	LocationID bestPos = CASTLE_DRACULA;
-	registerBestPlay(idToAbbrev(bestPos),"Mwuhahahaha");
-}
+// int locFound(int *arr, int size, int dest) {
+// 	for ( int i = 0; i < size; i++ ) {
+// 		if ( arr[i] == dest ) return TRUE;
+// 	}
+// 	return FALSE;
+// }
 
 int isUnique(int *arr, int obj) {
 	if (arr[obj] != -1 ) {
@@ -33,7 +18,6 @@ int isUnique(int *arr, int obj) {
 
 //INCLUDES BOTH ROAD AND SEA CONNS
 void shortestPath(DracView gameState, int dest, int *path) {
-	Map map = newMap();
 	int src = whereIs(gameState, PLAYER_DRACULA);
 	int *x= 0;
 	QHead dracQ = initQ();
@@ -46,7 +30,8 @@ void shortestPath(DracView gameState, int dest, int *path) {
   while ( vex[dest] == -1 && QSize(dracQ) != 0 ) {
 		toSearch = deQ(dracQ);
     //FIND THE REACHABLE LOCATIONS
-    check = reachableLocations(map, x, toSearch, TRUE, 0, TRUE, TRUE);
+    check = reachableLocations(Map map, x,
+      toSearch, TRUE, 0, TRUE, TRUE);
     //Loop through the check array to get locations
     for ( col = 0; col < *x; col++ ) {
 			if( isUnique(vex, check[col]) == FALSE ) continue;

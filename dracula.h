@@ -5,5 +5,3 @@
 // Version: 1.0
 
 void decideDraculaMove(DracView gameState);
-//THIS NEEDS TO BE MODIFIED
-void shortestPath(HunterView gameState, int pID, int tarLoc, int *path);
