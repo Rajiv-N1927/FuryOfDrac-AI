@@ -8,7 +8,7 @@
 #include "Queue.h"
 
 int isUnique(int *arr, int obj);
-int shortestPath(HunterView gameState, int dest, int *path);
+int shortestPath(HunterView gameState, PlayerID pID, int dest, int *path);
 int sizePath( int src, int dest, LocationID *pathFound );
 int ret(int src, int dest, LocationID *pathFound, int *pathToAdd);
 
