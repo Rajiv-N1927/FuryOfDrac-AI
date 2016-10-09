@@ -10,7 +10,7 @@
 
 #define MAX_NO_CONN 9
 int isUnique(int *arr, int obj);
-void shortestPath(DracView gameState, int dest, int *path);
+int shortestPath(DracView gameState, int dest, int *path);
 int sizePath( int src, int dest, LocationID *pathFound );
 int ret(int src, int dest, LocationID *pathFound, int *pathToAdd);
 
@@ -32,15 +32,19 @@ int isUnique(int *arr, int obj) {
 
 
 //INCLUDES BOTH ROAD AND SEA CONNS
-void shortestPath(DracView gameState, int dest, int *path) {
+int shortestPath(DracView gameState, int dest, int *path) {
 	Map map = newMap();
 	int src = whereIs(gameState, PLAYER_DRACULA);
 	int *x= 0;
 	QHead dracQ = initQ();
 	addQ(dracQ, src);
-	LocationID vex[NUM_MAP_LOCATIONS];
+	LocationID vex[NUM_MAP_LOCATIONS], vexDis[NUM_MAP_LOCATIONS];
 	LocationID *check = malloc( sizeof(LocationID)*9 );
-	for( int i = 0; i < NUM_MAP_LOCATIONS; i++ ) vex[i] = -1;
+	//Initialise the vertex arrays
+	for( int i = 0; i < NUM_MAP_LOCATIONS; i++ ) {
+		vex[i] = -1;
+	}
+	//The src point to itself
 	vex[src] = src;
 	int toSearch = -1, col = -1;
   while ( vex[dest] == -1 && QSize(dracQ) != 0 ) {

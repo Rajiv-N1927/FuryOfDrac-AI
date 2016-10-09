@@ -5,4 +5,3 @@
 // Version: 1.0
 
 void decideHunterMove(HunterView gameState);
-void shortestPath(HunterView gameState, int pID, int *path); //THIS NEEDS TO BE MODIFIED
