@@ -7,13 +7,12 @@
 #include "Map.h"
 #include "DracView.h"
 #include "Queue.h"
-
-#define MAX_NO_CONN 9
 //FOR THE SHORTEST PATH
 int isUnique(int *arr, int obj);
 int shortestPath(DracView gameState, int dest, int *path);
 int sizePath( int src, int dest, LocationID *pathFound );
 int ret(int src, int dest, LocationID *pathFound, int *pathToAdd);
+int checkIfInTrail(DracView gameState, LocationID myLoc);
 //FOR THE MOVEMENT DECISION
 int checkPosInNTrail(LocationID loc);
 //int locPos(int *arr, LocationID obj);
@@ -26,19 +25,19 @@ void decideDraculaMove(DracView gameState)
 	LocationID myPos = whereIs(gameState, me);
 	int curHealth = howHealthyIs(gameState, me);
 	if( curHealth >= 28 && checkPosInNTrail(myPos) ) {
-		swtich(myPos) {
+		switch(myPos) {
 			case UNKNOWN_LOCATION:  bestPos = MARSEILLES; //0
 				break;
 			case MARSEILLES: 				bestPos = MEDITERRANEAN_SEA; //1 |
-				break; 																								// |
+				break; 																							// |
 			case MEDITERRANEAN_SEA: bestPos = ALICANTE; //2					 |
-				break;																								// |
+				break;																							// |
 			case ALICANTE: 					bestPos = SARAGOSSA; //3         |
-				break;																								// |
+				break;																							// |
 			case SARAGOSSA: 				bestPos = BORDEAUX; //4          |
-				break;																								// |
+				break;																							// |
 			case BORDEAUX: 					bestPos = BAY_OF_BISCAY; //5     |
-				break; 																							  // |
+				break; 																							// |
 			case BAY_OF_BISCAY: 		bestPos = MEDITERRANEAN_SEA; //6 |
 		}
 	} else {
@@ -75,6 +74,17 @@ int checkPosInNTrail(LocationID loc) {
 	return FALSE;
 }
 //SHORTEST PATH
+
+int checkIfInTrail(DracView gameState, LocationID myLoc) {
+	int i;
+	LocationID trail[TRAIL_SIZE];
+	giveMeTheTrail(gameState, PLAYER_DRACULA, trail);
+	for ( i = 0; i < TRAIL_SIZE; i++ ) {
+		if ( trail[i] == myLoc ) return FALSE;
+	}
+	return TRUE;
+}
+
 int isUnique(int *arr, int obj) {
 	if (arr[obj] != -1 ) {
 		//printf("%d\n", arr[obj]);
@@ -110,18 +120,20 @@ int shortestPath(DracView gameState, int dest, int *path) {
     for ( col = 0; col < *x; col++ ) {
 			//Need to work on this
 			if( isUnique(vex, check[col]) == FALSE ) continue;
-			vex[check[col]] = toSearch;
-			addQ(dracQ, check[col]);
-      if( vex[dest] != -1 ) break;
+			if ( checkIfInTrail(gameState, check[col]) ) {
+				vex[check[col]] = toSearch;
+				addQ(dracQ, check[col]);
+      	if( vex[dest] != -1 ) break;
+			}
 		}
 
-  } if ( QSize(dracQ) == 0 ) {
+  } if ( QSize(dracQ) == 0 ) { //If not path has been found
 		free(map);
 		disposeQ(dracQ);
 		printf("NO PATH FOUND\n");
 		return FALSE;
 	}
-	else {
+	else {	//If path has been found add it to the actual path
 		free(map);
 		disposeQ(dracQ);
 		return ret(src, dest, vex, path);

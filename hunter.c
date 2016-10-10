@@ -16,6 +16,20 @@ int ret(int src, int dest, LocationID *pathFound, int *pathToAdd);
 void decideHunterMove(HunterView gameState)
 {
   LocationID bestPos = GENEVA;
+  PlayerID me = whoAmI(gameState);
+  LocationID whereAmI = whereIs(gameState, me);
+  switch( me ) {
+    case PLAYER_DR_SEWARD:
+      if ( whereAmI == UNKNOWN_LOCATION ) bestPos = 1;
+      else if ( whereAmI == UNKNOWN_LOCATION ) {}
+    break;
+    case PLAYER_VAN_HELSING:
+    break;
+    case PLAYER_LORD_GODALMING:
+    break;
+    case PLAYER_MINA_HARKER:
+    break;
+  }
   registerBestPlay(idToAbbrev(bestPos),"I'm on holiday in Geneva");
 }
 
@@ -48,7 +62,7 @@ int shortestPath(HunterView gameState, PlayerID pID, int dest, int *path) {
     toSearch = deQ(huntQ);
     //FIND THE REACHABLE LOCATIONS
     int dist = sizePath(src, toSearch, vex); int test = 0;
-    int railLength = (giveMeTheRound(gameState) + dist + 0)%4;
+    int railLength = (giveMeTheRound(gameState) + dist + pID)%4;
     //Check the location area;
     LocationID *check; int *x = &test;
     check = reachableLocations(map, x, toSearch, FALSE, railLength, TRUE, TRUE);

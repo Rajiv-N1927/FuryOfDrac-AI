@@ -64,7 +64,7 @@ int shortestPath(Map map, int src, int dest, int round, int *path) {
     int railLength = (round + dist + 0)%4;
     //Check the location area;
     LocationID *check; int *x = &test;
-    check = reachableLocations(map, x, toSearch, FALSE, railLength, TRUE, TRUE);
+    check = reachableLocations(map, x, toSearch, FALSE, 0, TRUE, TRUE);
     //Loop through the check array to get locations
     for ( col = 0; col < *x; col++ ) {
 			if( isUnique(vex, check[col]) == FALSE ) continue;
@@ -108,7 +108,7 @@ int main( int argc, char* argv[] ) {
 
   Map map = newMap();
   LocationID arr[NUM_MAP_LOCATIONS] = {-1};
-  int numLocs = shortestPath(map, LONDON, BERLIN, 1, arr);
+  int numLocs = shortestPath(map, MEDITERRANEAN_SEA, CASTLE_DRACULA, 1, arr);
   for ( int i = 0; i < numLocs; i++ ) {
     printf("%s->", idToName(arr[i]));
   }
