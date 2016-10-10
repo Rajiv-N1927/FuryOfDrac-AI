@@ -43,12 +43,11 @@ void decideDraculaMove(DracView gameState)
 	} else {
 		//GOTTA GO BACK TO THE CASTLE BOIS
 		LocationID locToGo[NUM_MAP_LOCATIONS];
-		int trailLengthToGo = 0;
 		if ( myPos != CASTLE_DRACULA && curHealth <= 28 ) {
-			trailLengthToGo = shortestPath(gameState, CASTLE_DRACULA, locToGo);
+			shortestPath(gameState, CASTLE_DRACULA, locToGo);
 			bestPos = locToGo[1];
 		} else {
-			trailLengthToGo = shortestPath(gameState, MEDITERRANEAN_SEA, locToGo);
+			shortestPath(gameState, MEDITERRANEAN_SEA, locToGo);
 			bestPos = locToGo[1];
 		}
 	}

@@ -12,6 +12,11 @@ int isUnique(int *arr, int obj);
 int shortestPath(HunterView gameState, PlayerID pID, int dest, int *path);
 int sizePath( int src, int dest, LocationID *pathFound );
 int ret(int src, int dest, LocationID *pathFound, int *pathToAdd);
+//Where to move
+int Godalming(LocationID loc);
+int Seward(LocationID loc);
+int VanHelsing(LocationID loc);
+int MinHark(LocationID loc);
 
 void decideHunterMove(HunterView gameState)
 {
@@ -19,20 +24,58 @@ void decideHunterMove(HunterView gameState)
   PlayerID me = whoAmI(gameState);
   LocationID whereAmI = whereIs(gameState, me);
   switch( me ) {
+    case PLAYER_LORD_GODALMING:
+      Godalming(whereAmI);
+    break;
     case PLAYER_DR_SEWARD:
-      if ( whereAmI == UNKNOWN_LOCATION ) bestPos = 1;
-      else if ( whereAmI == UNKNOWN_LOCATION ) {}
+      Seward(whereAmI);
     break;
     case PLAYER_VAN_HELSING:
-    break;
-    case PLAYER_LORD_GODALMING:
+      VanHelsing(whereAmI);
     break;
     case PLAYER_MINA_HARKER:
+      MinHark(whereAmI);
     break;
   }
   registerBestPlay(idToAbbrev(bestPos),"I'm on holiday in Geneva");
 }
+int Godalming(LocationID loc) {
+  LocationID bestPos = -1;
+  switch( loc ) {
+    case UNKNOWN_LOCATION:
+    break;
+  }
+  return bestPos;
+}
 
+int Seward(LocationID loc) {
+  LocationID bestPos = -1;
+  switch( loc ) {
+    case UNKNOWN_LOCATION:
+    break;
+  }
+  return bestPos;
+}
+
+int VanHelsing(LocationID loc) {
+  LocationID bestPos = -1;
+  switch( loc ) {
+    case UNKNOWN_LOCATION:
+    break;
+  }
+  return bestPos;
+}
+
+int MinHark(LocationID loc) {
+  LocationID bestPos = -1;
+  switch( loc ) {
+    case UNKNOWN_LOCATION:
+    break;
+  }
+  return bestPos;
+}
+
+//FOR THE SHORTESTPATH
 int isUnique(int *arr, int obj) {
 	if (arr[obj] != -1 ) {
 		//printf("%d\n", arr[obj]);
@@ -42,7 +85,6 @@ int isUnique(int *arr, int obj) {
 		return TRUE;
 	}
 }
-
 
 //INCLUDES BOTH ROAD AND SEA CONNS
 int shortestPath(HunterView gameState, PlayerID pID, int dest, int *path) {
