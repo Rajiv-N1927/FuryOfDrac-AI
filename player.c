@@ -10,7 +10,7 @@
  *
  * Note that it used to drive both Hunter and Dracula AIs.
  * It first creates an appropriate view, and then invokes the
- * relevant decide-my-move function, which should use the 
+ * relevant decide-my-move function, which should use the
  * registerBestPlay() function to send the move back.
  *
  * The real player.c applies a timeout, so that it will halt
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 {
 #ifdef I_AM_DRACULA
    DracView gameState;
-   char *plays = "GZA.... SED.... HZU.... MZU....";
+   char *plays = "GZA.... SED.... HZU.... MZU.... DBE....";
    PlayerMessage msgs[3] = { "", "", "" };
    gameState = newDracView(plays,msgs);
    decideDraculaMove(gameState);
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
    gameState = newHunterView(plays,msgs);
    decideHunterMove(gameState);
    disposeHunterView(gameState);
-#endif 
+#endif
    printf("Move: %s, Message: %s\n", latestPlay, latestMessage);
    return EXIT_SUCCESS;
 }
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 void registerBestPlay (char *play, PlayerMessage message) {
    strncpy(latestPlay, play, MOVE_SIZE-1);
    latestPlay[MOVE_SIZE-1] = '\0';
-     
+
    strncpy(latestMessage, message, MESSAGE_SIZE);
    latestMessage[MESSAGE_SIZE-1] = '\0';
 }

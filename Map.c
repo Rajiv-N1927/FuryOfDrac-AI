@@ -8,6 +8,10 @@
 #include <stdlib.h>
 #include "Map.h"
 #include "Places.h"
+#include "Queue.h"
+
+#define TRUE 1
+#define FALSE 0
 
 typedef struct vNode *VList;
 
@@ -25,6 +29,92 @@ struct MapRep {
 
 static void addConnections(Map);
 static void includeReachableByRail(Map map, int *reachable, LocationID from, int railLength);
+//------------------FUNCTION TESTING!------------------------------//
+/*LocationID *reachableLocations(Map map, int *numLocations, LocationID from, int drac, int railLength, int road, int sea);
+int isUnique(int *arr, int obj);
+int shortestPath(Map map, int src, int dest, int round, int *path);
+int sizePath( int src, int dest, LocationID *pathFound );
+int ret(int src, int dest, LocationID *pathFound, int *pathToAdd);
+
+int isUnique(int *arr, int obj) {
+	if (arr[obj] != -1 ) {
+		//printf("%d\n", arr[obj]);
+		return FALSE;
+	}
+	else {
+		return TRUE;
+	}
+}
+
+int shortestPath(Map map, int src, int dest, int round, int *path) {
+	QHead huntQ = initQ();
+	addQ(huntQ, src);
+	LocationID vex[NUM_MAP_LOCATIONS];
+	//Initialise the vertex arrays
+	for( int i = 0; i < NUM_MAP_LOCATIONS; i++ ) {
+		vex[i] = -1;
+	}
+	//The src point to itself
+	vex[src] = src;
+	int toSearch = -1, col = -1;
+  while ( vex[dest] == -1 && QSize(huntQ) != 0 ) {
+		toSearch = deQ(huntQ);
+    //FIND THE REACHABLE LOCATIONS
+    int dist = sizePath(src, toSearch, vex); int test = 0;
+    int railLength = (round + dist + 0)%4;
+    //Check the location area;
+    LocationID *check; int *x = &test;
+    check = reachableLocations(map, x, toSearch, FALSE, railLength, TRUE, TRUE);
+    //Loop through the check array to get locations
+    for ( col = 0; col < *x; col++ ) {
+			if( isUnique(vex, check[col]) == FALSE ) continue;
+			vex[check[col]] = toSearch;
+			addQ(huntQ, check[col]);
+      if( vex[dest] != -1 ) break;
+		}
+
+  } if ( QSize(huntQ) == 0 ) {
+		disposeQ(huntQ);
+		printf("NO PATH FOUND\n");
+		return FALSE;
+	}
+	else {
+		disposeQ(huntQ);
+		int x = ret(src, dest, vex, path);
+    return x;
+	}
+}
+
+int sizePath( int src, int dest, LocationID *pathFound ) {
+	int i, j;
+  if ( src == dest ) return 0;
+	for( i = pathFound[dest], j = 0; i != src; i = pathFound[i], j++ );
+	return j;
+}
+
+int ret(int src, int dest, LocationID *pathFound, int *pathToAdd) {
+	int x = sizePath(src, dest, pathFound), i, j;
+	pathToAdd[0] = src;
+	pathToAdd[x+1] = dest;
+	for( i = pathFound[dest], j = x; i != src; i = pathFound[i], j-- ) {
+		pathToAdd[j] = i;
+	}
+	return x+2;
+}
+//-------------------TESTING THE FUNCTION---------------------//
+
+//JUST A TESTING MAIN FUNCTION----------------------//
+int main( int argc, char* argv[] ) {
+
+  Map map = newMap();
+  LocationID arr[NUM_MAP_LOCATIONS] = {-1};
+  int numLocs = shortestPath(map, LONDON, BERLIN, 1, arr);
+  for ( int i = 0; i < numLocs; i++ ) {
+    printf("%s->", idToName(arr[i]));
+  }
+  printf("X\n");
+  return 0;
+}*/
 
 // Create a new empty graph (for a map)
 // #Vertices always same as NUM_PLACES
