@@ -12,7 +12,7 @@
 #define HP_THRESHOLD 25
 //FOR THE SHORTEST PATH
 int isUnique(int *arr, int obj);
-int shortestPath(DracView gameState, int dest, int *path);
+int shortestPath(DracView gameState, int sea, int dest, int *path);
 int sizePath( int src, int dest, LocationID *pathFound );
 int returnPath(int src, int dest, LocationID *pathFound, int *pathToAdd);
 int checkIfInTrail(DracView gameState, LocationID myLoc);
@@ -28,7 +28,7 @@ void decideDraculaMove(DracView gameState)
 	giveMeTheTrail(gameState, me, trail);
 	LocationID myPos = whereIs(gameState, me);
 	for ( int x = 0; x < TRAIL_SIZE; x++ ) {
-	printf("\n[Pos]:%d->%s\n", x, idToName(trail[x]) );
+		printf("\n[Pos]:%d->%s\n", x, idToName(trail[x]) );
 	}
 	int curHealth = howHealthyIs(gameState, me);
 
@@ -78,10 +78,15 @@ void decideDraculaMove(DracView gameState)
 		LocationID locToGo[NUM_MAP_LOCATIONS];
 		// int trailLengthToGo = 0;
 		if ( myPos != CASTLE_DRACULA && curHealth <= HP_THRESHOLD ) {
-			shortestPath( gameState, CASTLE_DRACULA, locToGo);
+			printf("EXB\n");
+			shortestPath( gameState, TRUE, CASTLE_DRACULA, locToGo);
 			bestPos = locToGo[1];
 		} else {
-			shortestPath( gameState, BORDEAUX, locToGo);
+			printf("EXH\n");
+			int Tlength = shortestPath( gameState, TRUE, BORDEAUX, locToGo);
+			for ( int x = 0; x < Tlength; x++ ) {
+				printf("\n[Pos]:%d->%s\n", x, idToName(locToGo[x]));
+			}
 			bestPos = locToGo[1];
 		}
 
@@ -135,7 +140,7 @@ int isUnique(int *arr, int obj) {
 
 
 //INCLUDES BOTH ROAD AND SEA CONNS
-int shortestPath(DracView gameState, int dest, int *path) {
+int shortestPath(DracView gameState, int sea, int dest, int *path) {
 	//Intialise Everything needed i.e. Map, the curr Pos, and the trail
 	Map map = newMap();
 	int src = whereIs(gameState, PLAYER_DRACULA);
@@ -159,7 +164,7 @@ int shortestPath(DracView gameState, int dest, int *path) {
     //FIND THE REACHABLE LOCATIONS
 		int test = 0; int *x = &test;
 		LocationID *check;
-    check = reachableLocations(map, x, toSearch, TRUE, 0, TRUE, TRUE);
+    check = reachableLocations(map, x, toSearch, TRUE, 0, TRUE, sea);
     //Loop through the check array to get locations
     for ( col = 0; col < *x; col++ ) {
 			//Need to work on this

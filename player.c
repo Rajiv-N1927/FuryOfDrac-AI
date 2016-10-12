@@ -55,7 +55,8 @@ int main(int argc, char *argv[])
  GZA.... SED.... HZU.... MZU.... DBO....\
  GZA.... SED.... HZU.... MZU.... DCF....\
  GZA.... SED.... HZU.... MZU.... DTO....\
- GZA.... SED.... HZU.... MZU.... DD1....";
+ GZA.... SED.... HZU.... MZU.... DMR....\
+ GZA.... SED.... HZU.... MZU.... DMI....";
    PlayerMessage msgs[3] = { "", "", "" };
    gameState = newDracView(plays,msgs);
    decideDraculaMove(gameState);
