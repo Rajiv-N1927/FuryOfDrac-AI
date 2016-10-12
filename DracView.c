@@ -32,11 +32,11 @@ static void setMyTrail(char *pastPlays, LocationID *myTrail)
         LocationID realLoc;
         if      (p[1] == 'T' && p[2] == 'P') realLoc = CASTLE_DRACULA;
         else if (p[1] == 'H' && p[2] == 'I') realLoc = myTrail[0];
-        else if (p[1] == 'D' && p[2] == '1') realLoc = myTrail[1];
-        else if (p[1] == 'D' && p[2] == '2') realLoc = myTrail[2];
-        else if (p[1] == 'D' && p[2] == '3') realLoc = myTrail[3];
-        else if (p[1] == 'D' && p[2] == '4') realLoc = myTrail[4];
-        else if (p[1] == 'D' && p[2] == '5') realLoc = myTrail[5];
+        else if (p[1] == 'D' && p[2] == '1') realLoc = myTrail[0];
+        else if (p[1] == 'D' && p[2] == '2') realLoc = myTrail[1];
+        else if (p[1] == 'D' && p[2] == '3') realLoc = myTrail[2];
+        else if (p[1] == 'D' && p[2] == '4') realLoc = myTrail[3];
+        else if (p[1] == 'D' && p[2] == '5') realLoc = myTrail[4];
         else {
             // must be a real location
             char place[3] = { p[1], p[2], '\0' };
@@ -156,7 +156,7 @@ void giveMeTheMoves(DracView currentView, PlayerID player,
 //// Functions that query the map to find information about connectivity
 
 // Helper function for whereCanIgo
-static int onTrail(LocationID *trail, LocationID loc)
+int onTrail(LocationID *trail, LocationID loc)
 {
     int i;
     for (i = 1; i < TRAIL_SIZE; i++)
