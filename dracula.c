@@ -20,13 +20,16 @@ int validateDest(Map map, LocationID *trail, LocationID dest);
 //FOR THE MOVEMENT DECISION
 int checkPosInNTrail(LocationID loc);
 
-
 void decideDraculaMove(DracView gameState)
 {
 	LocationID bestPos = -1;
 	PlayerID me = PLAYER_DRACULA;
+	LocationID trail[TRAIL_SIZE];
+	giveMeTheTrail(gameState, me, trail);
 	LocationID myPos = whereIs(gameState, me);
-
+	for ( int x = 0; x < TRAIL_SIZE; x++ ) {
+	printf("\n[Pos]:%d->%s\n", x, idToName(trail[x]) );
+	}
 	int curHealth = howHealthyIs(gameState, me);
 
 	if( curHealth >= HP_THRESHOLD && checkPosInNTrail(myPos) ) {
@@ -83,9 +86,10 @@ void decideDraculaMove(DracView gameState)
 		}
 
 	}
-
+	printf("=============CURRENT STATS=============\n");
+	printf("\n[Registered Pos]->%s\n", idToName(bestPos));
+	printf("[HEALTH]: %d\n\n---------------------------------------\n", curHealth);
 	registerBestPlay(idToAbbrev(bestPos),"lol");
-
 }
 //CHECK THE HARD CODED PATH
 // int locPos(int *arr, LocationID obj) {
@@ -99,7 +103,7 @@ void decideDraculaMove(DracView gameState)
 int checkPosInNTrail(LocationID loc) {
 	int check;
 	LocationID nTrail[] = {UNKNOWN_LOCATION, MARSEILLES, MEDITERRANEAN_SEA,
-												 ALICANTE, CLERMONT_FERRAND, SARAGOSSA, BORDEAUX, TOULOUSE};
+		ALICANTE, CLERMONT_FERRAND, SARAGOSSA, BORDEAUX, TOULOUSE};
 	for (check = 0; check < 7; check++) {
 		if ( nTrail[check] == loc ) return TRUE;
 	}
