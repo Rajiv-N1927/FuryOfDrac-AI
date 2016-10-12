@@ -44,42 +44,42 @@ void decideHunterMove(HunterView gameState)
     case PLAYER_MINA_HARKER:
       bestPos = MinHark(whereAmI);
     break;
-  }
+  }  
   registerBestPlay(idToAbbrev(bestPos),"fight");
 }
 int Godalming(LocationID loc) {
   LocationID bestPos = LISBON;
   switch( loc ) {
     case SANTANDER :
-      bestPos = LISBON;
+      bestPos = LISBON; 
       break;
 
     case LISBON :
-      bestPos = CADIZ;
+      bestPos = CADIZ; 
       break;
 
     case CADIZ :
-      bestPos = GRANADA;
+      bestPos = GRANADA; 
       break;
 
     case GRANADA :
-      bestPos = ALICANTE;
+      bestPos = ALICANTE; 
       break;
 
     case ALICANTE :
-      bestPos = SARAGOSSA;
+      bestPos = SARAGOSSA; 
       break;
 
     case SARAGOSSA :
-      bestPos = SANTANDER;
+      bestPos = SANTANDER; 
       break;
 
-    case UNKNOWN_LOCATION :
-      bestPos = CADIZ;
+    case UNKNOWN_LOATION : 
+      bestPos = CADIZ; 
       break;
 
-    default :
-      //bestPos = // shortestPath back to alicante;
+    default : 
+      bestPos = // shortestPath back to alicante; 
       break;
 
   }
@@ -89,52 +89,52 @@ int Godalming(LocationID loc) {
 int Seward(LocationID loc) {
   LocationID bestPos = ENGLISH_CHANNEL;
   switch( loc ) {
-    case UNKNOWN_LOCATION :
-      bestPos = LONDON;
-      break;
-
     case LE_HAVRE :
-      bestPos = ENGLISH_CHANNEL;
+      bestPos = ENGLISH_CHANNEL; 
       break;
 
     case ENGLISH_CHANNEL :
-      bestPos = LONDON;
+      bestPos = LONDON; 
       break;
 
     case LONDON :
-      bestPos = SWANSEA;
+      bestPos = SWANSEA; 
       break;
 
     case SWANSEA :
-      bestPos = LIVERPOOL;
+      bestPos = LIVERPOOL; 
       break;
 
     case LIVERPOOL :
-      bestPos = MANCHESTER;
+      bestPos = MANCHESTER; 
       break;
 
     case MANCHESTER :
-      bestPos = EDINBURGH;
+      bestPos = EDINBURGH; 
       break;
 
     case EDINBURGH:
-      bestPos = NORTH_SEA;
+      bestPos = NORTH_SEA; 
       break;
 
     case NORTH_SEA :
-      bestPos = AMSTERDAM;
+      bestPos = AMSTERDAM; 
       break;
 
     case AMSTERDAM :
-      bestPos = BRUSSELS;
+      bestPos = BRUSSELS; 
       break;
 
     case BRUSSELS :
-      bestPos = LE_HAVRE;
+      bestPos = LE_HAVRE; 
       break;
 
-    default :
-      //bestPos = // shortestPath back to london;
+    case UNKNOWN_LOATION : 
+      bestPos = LONDON; 
+      break;
+
+    default : 
+      bestPos = // shortestPath back to london; 
       break;
   }
   return bestPos;
@@ -145,55 +145,55 @@ int VanHelsing(LocationID loc) {
   switch( loc ) {
 
     case HAMBURG :
-      bestPos = COLOGNE;
+      bestPos = COLOGNE; 
       break;
 
     case COLOGNE :
-      bestPos = BRUSSELS;
+      bestPos = BRUSSELS; 
       break;
 
     case BRUSSELS :
-      bestPos = PARIS;
+      bestPos = PARIS; 
       break;
 
     case PARIS :
-      bestPos = STRASBOURG;
+      bestPos = STRASBOURG; 
       break;
 
     case STRASBOURG :
-      bestPos = GENEVA;
+      bestPos = GENEVA; 
       break;
 
     case GENEVA :
-      bestPos = MARSEILLES;
+      bestPos = MARSEILLES; 
       break;
 
     case MARSEILLES :
-      bestPos = MILAN;
+      bestPos = MILAN; 
       break;
 
     case MILAN :
-      bestPos = MUNICH;
+      bestPos = MUNICH; 
       break;
 
     case MUNICH :
-      bestPos = NUREMBURG;
+      bestPos = NUREMBURG; 
       break;
 
     case NUREMBURG :
-      bestPos = LEIPZIG;
+      bestPos = LEIPZIG; 
       break;
 
     case LEIPZIG :
-      bestPos = HAMBURG;
+      bestPos = HAMBURG; 
       break;
 
-    case UNKNOWN_LOCATION :
-      bestPos = PARIS;
+    case UNKNOWN_LOATION : 
+      bestPos = PARIS; 
       break;
 
-    default :
-      //bestPos = // shortestPath back to PARIS
+    default : 
+      bestPos = // shortestPath back to PARIS 
       break;
 
   }
@@ -204,51 +204,51 @@ int MinHark(LocationID loc) {
   LocationID bestPos = BUDAPEST;
   switch( loc ) {
     case KLAUSENBURG :
-      bestPos = BUDAPEST;
+      bestPos = BUDAPEST; 
       break;
 
     case BUDAPEST :
-      bestPos = ZAGREB;
+      bestPos = ZAGREB; 
       break;
 
     case ZAGREB :
-      bestPos = SARAJEVO;
+      bestPos = SARAJEVO; 
       break;
 
     case SARAJEVO :
-      bestPos = VALONA;
+      bestPos = VALONA; 
       break;
 
     case VALONA :
-      bestPos = SALONICA;
+      bestPos = SALONICA; 
       break;
 
     case SALONICA :
-      bestPos = SOFIA;
+      bestPos = SOFIA; 
       break;
 
     case SOFIA :
-      bestPos = BUCHAREST;
+      bestPos = BUCHAREST; 
       break;
 
     case BUCHAREST :
-      bestPos = CONSTANTA;
+      bestPos = CONSTANTA; 
       break;
 
     case CONSTANTA :
-      bestPos = GALATZ;
+      bestPos = GALATZ; 
       break;
 
     case GALATZ :
-      bestPos = KLAUSENBURG;
+      bestPos = KLAUSENBURG; 
       break;
 
-    case UNKNOWN_LOCATION :
-      bestPos = SOFIA;
+    case UNKNOWN_LOATION : 
+      bestPos = SOFIA; 
       break;
 
-    default :
-      //bestPos = // shortestPath back to VALONA
+    default : 
+      bestPos = // shortestPath back to VALONA 
       break;
   }
   return bestPos;

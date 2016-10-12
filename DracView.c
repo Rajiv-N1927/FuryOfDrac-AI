@@ -156,7 +156,7 @@ void giveMeTheMoves(DracView currentView, PlayerID player,
 //// Functions that query the map to find information about connectivity
 
 // Helper function for whereCanIgo
-static int onTrail(LocationID *trail, LocationID loc)
+int onTrail(LocationID *trail, LocationID loc)
 {
     int i;
     for (i = 1; i < TRAIL_SIZE; i++)

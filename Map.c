@@ -35,6 +35,7 @@ int isUnique(int *arr, int obj);
 int shortestPath(Map map, int src, int dest, int round, int *path);
 int sizePath( int src, int dest, LocationID *pathFound );
 int ret(int src, int dest, LocationID *pathFound, int *pathToAdd);
+int checkBack(LocationID loc);
 
 int isUnique(int *arr, int obj) {
 	if (arr[obj] != -1 ) {
@@ -47,6 +48,22 @@ int isUnique(int *arr, int obj) {
 }
 
 int shortestPath(Map map, int src, int dest, int round, int *path) {
+  //First check if the destination is not in the path
+  if ( !checkBack(dest) ) {
+    printf("WORKS\n");
+    while ( !checkBack(dest) ) {
+    int test = 0;
+    LocationID *check; int *x = &test;
+    check = reachableLocations(map, x, dest, FALSE, 0, TRUE, TRUE);
+    int col;
+      for ( col = 0; col < *x; col++ ) {
+        if ( checkBack(check[col]) ) dest = check[col]; break;
+  printf("in:%s\n", idToName(dest));
+      } if ( !checkBack(dest) ) dest = check[0];
+    }
+  }
+  printf("%s\n", idToName(dest));
+  //Now start searching
 	QHead huntQ = initQ();
 	addQ(huntQ, src);
 	LocationID vex[NUM_MAP_LOCATIONS];
@@ -68,9 +85,11 @@ int shortestPath(Map map, int src, int dest, int round, int *path) {
     //Loop through the check array to get locations
     for ( col = 0; col < *x; col++ ) {
 			if( isUnique(vex, check[col]) == FALSE ) continue;
-			vex[check[col]] = toSearch;
-			addQ(huntQ, check[col]);
-      if( vex[dest] != -1 ) break;
+      if ( checkBack(check[col]) ) {
+			  vex[check[col]] = toSearch;
+			  addQ(huntQ, check[col]);
+        if( vex[dest] != -1 ) break;
+      }
 		}
 
   } if ( QSize(huntQ) == 0 ) {
@@ -83,6 +102,14 @@ int shortestPath(Map map, int src, int dest, int round, int *path) {
 		int x = ret(src, dest, vex, path);
     return x;
 	}
+}
+
+int checkBack(LocationID loc) {
+  int trail[6] = {BERLIN, HAMBURG, NORTH_SEA, ENGLISH_CHANNEL, LONDON};
+  for ( int i = 0; i < 5; i++ ) {
+    if ( trail[i] == loc ) return FALSE;
+  }
+  return TRUE;
 }
 
 int sizePath( int src, int dest, LocationID *pathFound ) {
@@ -108,7 +135,7 @@ int main( int argc, char* argv[] ) {
 
   Map map = newMap();
   LocationID arr[NUM_MAP_LOCATIONS] = {-1};
-  int numLocs = shortestPath(map, LONDON, BERLIN, 1, arr);
+  int numLocs = shortestPath(map, BERLIN, LONDON, 1, arr);
   for ( int i = 0; i < numLocs; i++ ) {
     printf("%s->", idToName(arr[i]));
   }
