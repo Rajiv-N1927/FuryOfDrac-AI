@@ -79,7 +79,7 @@ int Godalming(LocationID loc) {
       break;
 
     default :
-      //bestPos = // shortestPath back to alicante;
+      //bestPos = // shortestPath back to alicante; 
       break;
 
   }
@@ -89,10 +89,6 @@ int Godalming(LocationID loc) {
 int Seward(LocationID loc) {
   LocationID bestPos = ENGLISH_CHANNEL;
   switch( loc ) {
-    case UNKNOWN_LOCATION :
-      bestPos = LONDON;
-      break;
-
     case LE_HAVRE :
       bestPos = ENGLISH_CHANNEL;
       break;
@@ -131,6 +127,10 @@ int Seward(LocationID loc) {
 
     case BRUSSELS :
       bestPos = LE_HAVRE;
+      break;
+
+    case UNKNOWN_LOCATION :
+      bestPos = LONDON;
       break;
 
     default :
