@@ -94,7 +94,8 @@ int shortestPath(HunterView gameState, PlayerID pID, int dest, int *path) {
 	addQ(huntQ, src);
 	LocationID vex[NUM_MAP_LOCATIONS];
 	//Initialise the vertex arrays
-	for( int i = 0; i < NUM_MAP_LOCATIONS; i++ ) {
+  int i;
+	for( i = 0; i < NUM_MAP_LOCATIONS; i++ ) {
 		vex[i] = -1;
 	}
 	//The src point to itself

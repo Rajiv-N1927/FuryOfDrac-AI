@@ -45,13 +45,21 @@ void decideDraculaMove(DracView gameState)
 		LocationID locToGo[NUM_MAP_LOCATIONS];
 		if ( myPos != CASTLE_DRACULA && curHealth <= 28 ) {
 			shortestPath(gameState, CASTLE_DRACULA, locToGo);
+			printf("%d\n", locToGo[1]);
 			bestPos = locToGo[1];
 		} else {
 			shortestPath(gameState, MEDITERRANEAN_SEA, locToGo);
+			printf("%d\n", locToGo[1]);
 			bestPos = locToGo[1];
 		}
 	}
 	//Register the best play
+	printf("HEALTH %d\n", curHealth);
+	LocationID trail[TRAIL_SIZE];
+	giveMeTheTrail(gameState, PLAYER_DRACULA, trail);
+	for ( i = 0; i < TRAIL_SIZE; i++ ) {
+		printf("%d->", trail[i]);
+	}
 	registerBestPlay(idToAbbrev(bestPos),"Mwuhahahaha");
 }
 //CHECK THE HARD CODED PATH
@@ -79,6 +87,7 @@ int checkIfInTrail(DracView gameState, LocationID myLoc) {
 	LocationID trail[TRAIL_SIZE];
 	giveMeTheTrail(gameState, PLAYER_DRACULA, trail);
 	for ( i = 0; i < TRAIL_SIZE; i++ ) {
+		//printf("%s\n", idToName(trail[i]));
 		if ( trail[i] == myLoc ) return FALSE;
 	}
 	return TRUE;
@@ -103,7 +112,8 @@ int shortestPath(DracView gameState, int dest, int *path) {
 	addQ(dracQ, src);
 	LocationID vex[NUM_MAP_LOCATIONS];
 	//Initialise the vertex arrays
-	for( int i = 0; i < NUM_MAP_LOCATIONS; i++ ) {
+	int i;
+	for( i = 0; i < NUM_MAP_LOCATIONS; i++ ) {
 		vex[i] = -1;
 	}
 	//The src point to itself
@@ -119,7 +129,7 @@ int shortestPath(DracView gameState, int dest, int *path) {
     for ( col = 0; col < *x; col++ ) {
 			//Need to work on this
 			if( isUnique(vex, check[col]) == FALSE ) continue;
-			if ( checkIfInTrail(gameState, check[col]) ) {
+			if ( checkIfInTrail(gameState, check[col]) == FALSE ) {
 				vex[check[col]] = toSearch;
 				addQ(dracQ, check[col]);
       	if( vex[dest] != -1 ) break;
@@ -129,7 +139,7 @@ int shortestPath(DracView gameState, int dest, int *path) {
   } if ( QSize(dracQ) == 0 ) { //If not path has been found
 		free(map);
 		disposeQ(dracQ);
-		printf("NO PATH FOUND\n");
+		//printf("NO PATH FOUND\n");
 		return FALSE;
 	}
 	else {	//If path has been found add it to the actual path
