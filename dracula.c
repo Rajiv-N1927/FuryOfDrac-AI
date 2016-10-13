@@ -10,6 +10,7 @@
 
 #define MAX_NO_CONN 9
 #define HP_THRESHOLD 25
+#define HP_SEA_THRESHOLD 14 
 //FOR THE SHORTEST PATH
 int isUnique(int *arr, int obj);
 int shortestPath(DracView gameState, int sea, int dest, int *path);
