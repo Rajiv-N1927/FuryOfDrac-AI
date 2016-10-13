@@ -27,74 +27,282 @@ void decideDraculaMove(DracView gameState)
 	LocationID trail[TRAIL_SIZE];
 	giveMeTheTrail(gameState, me, trail);
 	LocationID myPos = whereIs(gameState, me);
-	for ( int x = 0; x < TRAIL_SIZE; x++ ) {
+
+	int roundNo = giveMeTheRound(gameState);
+
+	LocationID hunterOne = whereIs(gameState, PLAYER_LORD_GODALMING);
+	LocationID hunterTwo = whereIs(gameState, PLAYER_DR_SEWARD);
+	LocationID hunterThree = whereIs(gameState, PLAYER_VAN_HELSING);
+	LocationID hunterFour = whereIs(gameState, PLAYER_MINA_HARKER);
+
+	/* int x;
+
+	for ( x = 0; x < TRAIL_SIZE; x++ ) {
 		printf("\n[Pos]:%d->%s\n", x, idToName(trail[x]) );
-	}
+	} */ 
+
 	int curHealth = howHealthyIs(gameState, me);
 
-	if( curHealth >= HP_THRESHOLD && checkPosInNTrail(myPos) ) {
+	if (roundNo == 0) { // starting position 
 
-		switch(myPos) {
-			case UNKNOWN_LOCATION:
-	      bestPos = MARSEILLES;
-	      break;
+				if (hunterOne   != ALICANTE &&
+					hunterTwo   != ALICANTE &&
+					hunterThree != ALICANTE &&
+					hunterFour  != ALICANTE  ) {
 
-			case MARSEILLES:
-				bestPos = MEDITERRANEAN_SEA; //1
-				break;
+						bestPos = ALICANTE; 
 
-			case MEDITERRANEAN_SEA:
-				bestPos = ALICANTE; //2
-				break;
+		} else if ( hunterOne   != SWANSEA &&
+			 		hunterTwo   != SWANSEA &&
+					hunterThree != SWANSEA &&
+			 		hunterFour  != SWANSEA  ) {
 
-			case ALICANTE:
-				bestPos = SARAGOSSA; //3
-				break;
+						bestPos = SWANSEA; 
 
-			case SARAGOSSA:
-				bestPos = BORDEAUX; //4
-				break;
+		} else if ( hunterOne   != GENOA &&
+			 		hunterTwo   != GENOA &&
+					hunterThree != GENOA &&
+			 		hunterFour  != GENOA  ) {
 
-			case BORDEAUX:
-				bestPos = CLERMONT_FERRAND ; //5
-				break;
+						bestPos = GENOA; 
 
-			case CLERMONT_FERRAND:
-				bestPos = TOULOUSE;
-				break;
+		} else if ( hunterOne   != BORDEAUX &&
+			 		hunterTwo   != BORDEAUX &&
+					hunterThree != BORDEAUX &&
+			 		hunterFour  != BORDEAUX  ) {
 
-			case TOULOUSE:
-				bestPos = MARSEILLES; //6
-				break;
+						bestPos = BORDEAUX;  
 
-		  default :
-		    //bestPos = // shortestPath back to BORDEAUX;
-		    break;
+		} else if ( hunterOne   != ZAGREB &&
+			 		hunterTwo   != ZAGREB &&
+					hunterThree != ZAGREB &&
+			 		hunterFour  != ZAGREB  ) {
+
+						bestPos = ZAGREB; 
+
+		}											
+
+	} else if (curHealth >= HP_THRESHOLD) {
+
+		int numLocations = 0; 
+		int decided = 0; 
+		int moveDecision; 
+		LocationID * possibleMoves;
+
+		possibleMoves = whereCanIgo(gameState, &numLocations, TRUE, TRUE); 
+		// LocationID rawPossible[numLocations]; // for very end if need to DB/HIDE
+		// LocationID possibleMovesCopy[numLocations]; // includes to-be-removed locations 
+
+		if (numLocations >= 1) { // as long as there was a possible  move 
+
+			int moveCounter;
+
+			LocationID *hunterOneMoves;
+			LocationID *hunterTwoMoves;
+			LocationID *hunterThreeMoves;
+			LocationID *hunterFourMoves;
+
+			int noHunterOneMoves, noHunterTwoMoves, noHunterThreeMoves, noHunterFourMoves;
+			int counterOne, counterTwo, counterThree, counterFour; 
+
+			hunterOneMoves = whereCanTheyGo(gameState,   &noHunterOneMoves,     PLAYER_LORD_GODALMING, TRUE, TRUE, TRUE); 
+			hunterTwoMoves = whereCanTheyGo(gameState,   &noHunterTwoMoves,     PLAYER_DR_SEWARD,      TRUE, TRUE, TRUE); 
+			hunterThreeMoves = whereCanTheyGo(gameState, &noHunterThreeMoves,   PLAYER_VAN_HELSING,    TRUE, TRUE, TRUE); 
+			hunterFourMoves = whereCanTheyGo(gameState,  &noHunterFourMoves,    PLAYER_MINA_HARKER,    TRUE, TRUE, TRUE); 
+
+			for (moveCounter = 0; moveCounter < numLocations; moveCounter++) { // preventing moving drac near a hunter
+
+				for (counterOne = 0; counterOne < noHunterOneMoves; counterOne++) { 
+
+					if (hunterOneMoves[counterOne] == possibleMoves[moveCounter]) { 
+
+						possibleMoves[moveCounter] = 0; 
+
+					}
+
+				}
+
+				for (counterTwo = 0; counterTwo < noHunterTwoMoves; counterTwo++) { 
+
+					if (hunterTwoMoves[counterTwo] == possibleMoves[moveCounter]) { 
+
+						possibleMoves[moveCounter] = 0; 
+
+					}
+
+				}
+
+				for (counterThree = 0; counterThree < noHunterThreeMoves; counterThree++) { 
+
+					if (hunterThreeMoves[counterThree] == possibleMoves[moveCounter]) { 
+
+						possibleMoves[moveCounter] = 0; 
+
+					}
+
+				}
+
+				for (counterFour = 0; counterFour < noHunterFourMoves; counterFour++) { 
+
+					if (hunterFourMoves[counterFour] == possibleMoves[moveCounter]) { 
+
+						possibleMoves[moveCounter] = 0; 
+
+					}
+
+				}											
+
+			}
+
+			for (moveDecision = 0; moveDecision < numLocations; moveDecision++) { 
+
+				if (possibleMoves[moveDecision] != 0 && decided == 0) { 
+
+					bestPos = possibleMoves[moveDecision];
+					decided++; 
+					break; 
+
+				}
+
+			}
+
+			if (decided == 0) { // failed to find ideal spot where hunter can't go 
+
+				possibleMoves = whereCanIgo(gameState, &numLocations, TRUE, TRUE);
+
+				for (moveDecision = 0; moveDecision < numLocations; moveDecision++) { 
+
+					if (possibleMoves[moveDecision] != 0 && decided == 0) { // this refreshed array hasn't removed hunter spots 
+
+						bestPos = possibleMoves[moveDecision];
+						decided++; 
+						break; 
+
+					}
+
+				}			
+
+			}
+
+		} 
+
+		if (decided == 0) { // by this point it means our drac can't find any move not in its trail 
+
+			LocationID moveTrail[TRAIL_SIZE]; 
+			giveMeTheMoves(gameState, PLAYER_DRACULA, moveTrail);
+			int didHide = 0; 
+			int didDB = 0; 
+
+			for (moveDecision = 0; moveDecision < TRAIL_SIZE; moveDecision++) { 
+
+				if (moveTrail[moveDecision] == HIDE) { 
+
+					didHide++; 
+
+				}
+
+				if (moveTrail[moveDecision] >= DOUBLE_BACK_1 && moveTrail[moveDecision] <= DOUBLE_BACK_5) { 
+
+					didHide++; 
+
+				}				
+
+			}
+
+			if (didHide == 0) { 
+
+				bestPos = HIDE; 
+
+			} else if (didDB == 0) { 
+
+				bestPos = DOUBLE_BACK_1; // can make this more sophistiated later 
+
+			} else { 
+
+				// no moves available... 
+				bestPos = TELEPORT; 
+
+			}
+
+
 		}
 
-	} else {
+	} else { // need to go through this more thoroughly 
 
 		//GOTTA GO BACK TO THE CASTLE BOIS
 		LocationID locToGo[NUM_MAP_LOCATIONS];
 		// int trailLengthToGo = 0;
 		if ( myPos != CASTLE_DRACULA && curHealth <= HP_THRESHOLD ) {
-			printf("EXB\n");
-			shortestPath( gameState, TRUE, CASTLE_DRACULA, locToGo);
+			// printf("EXB\n");
+			if (curHealth > HP_SEA_THRESHOLD) {
+				shortestPath( gameState, TRUE, CASTLE_DRACULA, locToGo);
+			} else {
+				shortestPath( gameState, FALSE, CASTLE_DRACULA, locToGo);
+			}
+
 			bestPos = locToGo[1];
 		} else {
-			printf("EXH\n");
-			int Tlength = shortestPath( gameState, TRUE, BORDEAUX, locToGo);
-			for ( int x = 0; x < Tlength; x++ ) {
+			// printf("EXH\n");
+			//int Tlength = shortestPath( gameState, TRUE, BORDEAUX, locToGo);
+			
+			LocationID * possibleMoves;
+			int numLocations = 0; 
+
+			possibleMoves = whereCanIgo(gameState, &numLocations, TRUE, TRUE); 
+			/* int x; 
+			for ( x = 0; x < Tlength; x++ ) {
 				printf("\n[Pos]:%d->%s\n", x, idToName(locToGo[x]));
-			}
-			bestPos = locToGo[1];
+			} */ 
+			if (numLocations > 0) bestPos = possibleMoves[0];
 		}
 
 	}
-	printf("=============CURRENT STATS=============\n");
+	/* printf("=============CURRENT STATS=============\n");
 	printf("\n[Registered Pos]->%s\n", idToName(bestPos));
-	printf("[HEALTH]: %d\n\n---------------------------------------\n", curHealth);
+	printf("[HEALTH]: %d\n\n---------------------------------------\n", curHealth); */ 
+	if (bestPos == -1) { // this check needs work 
+
+			LocationID moveTrail[TRAIL_SIZE]; 
+			giveMeTheMoves(gameState, PLAYER_DRACULA, moveTrail);
+			int moveDecision; 
+			int didHide = 0; 
+			int didDB = 0; 
+
+			for (moveDecision = 0; moveDecision < TRAIL_SIZE; moveDecision++) { 
+
+				if (moveTrail[moveDecision] == HIDE) { 
+
+					didHide++; 
+
+				}
+
+				if (moveTrail[moveDecision] >= DOUBLE_BACK_1 && moveTrail[moveDecision] <= DOUBLE_BACK_5) { 
+
+					didHide++; 
+
+				}		
+
+			}		
+			
+			if (didHide == 0) { 
+
+				bestPos = HIDE; 
+
+			} else if (didDB == 0) { 
+
+				bestPos = DOUBLE_BACK_1; // can make this more sophistiated later 
+
+			} else { 
+
+				// no moves available... 
+				bestPos = TELEPORT; 
+
+			}
+
+	}
+
 	registerBestPlay(idToAbbrev(bestPos),"lol");
+
 }
 //CHECK THE HARD CODED PATH
 // int locPos(int *arr, LocationID obj) {
