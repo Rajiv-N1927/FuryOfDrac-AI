@@ -50,7 +50,7 @@ int isUnique(int *arr, int obj) {
 int shortestPath(Map map, int src, int dest, int round, int *path) {
   //First check if the destination is not in the path
   if ( !checkBack(dest) ) {
-    printf("WORKS\n");
+    //printf("WORKS\n");
     while ( !checkBack(dest) ) {
     int test = 0;
     LocationID *check; int *x = &test;
@@ -81,15 +81,15 @@ int shortestPath(Map map, int src, int dest, int round, int *path) {
     int railLength = (round + dist + 0)%4;
     //Check the location area;
     LocationID *check; int *x = &test;
-    check = reachableLocations(map, x, toSearch, FALSE, railLength, TRUE, TRUE);
+    check = reachableLocations(map, x, toSearch, FALSE, railLength, TRUE, FALSE);
     //Loop through the check array to get locations
     for ( col = 0; col < *x; col++ ) {
 			if( isUnique(vex, check[col]) == FALSE ) continue;
-      if ( checkBack(check[col]) ) {
+      //if ( checkBack(check[col]) ) {
 			  vex[check[col]] = toSearch;
 			  addQ(huntQ, check[col]);
         if( vex[dest] != -1 ) break;
-      }
+      //}
 		}
 
   } if ( QSize(huntQ) == 0 ) {
@@ -135,11 +135,17 @@ int main( int argc, char* argv[] ) {
 
   Map map = newMap();
   LocationID arr[NUM_MAP_LOCATIONS] = {-1};
-  int numLocs = shortestPath(map, BERLIN, LONDON, 1, arr);
-  for ( int i = 0; i < numLocs; i++ ) {
-    printf("%s->", idToName(arr[i]));
+  // int numLocs = shortestPath(map, ALICANTE, CASTLE_DRACULA, 1, arr);
+  // for ( int i = 0; i < numLocs; i++ ) {
+  //   printf("%s->", idToName(arr[i]));
+  // }
+  //printf("X\n");
+  int test = 0; int *x = &test;
+  LocationID *check;
+  check = reachableLocations(map, x, MILAN, FALSE, 0, TRUE, TRUE);
+  for ( int i = 0; i < test; i++ ) {
+    printf("%s\n", idToName(check[i]));
   }
-  printf("X\n");
   return 0;
 }*/
 

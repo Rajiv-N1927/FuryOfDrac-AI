@@ -12,8 +12,10 @@
 typedef struct dracView *DracView;
 
 //Helper Functions
+int isDBinTrail(DracView currentView);
+int isHideInTrail(DracView currentView);
 int onTrail(LocationID *trail, LocationID loc);
-
+int onWhoseTrail( DracView currentView, LocationID loc, PlayerID player );
 // newDracView() creates a new game view to summarise the current state of
 // the game.
 //

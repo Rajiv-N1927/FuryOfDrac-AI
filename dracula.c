@@ -10,15 +10,21 @@
 
 #define MAX_NO_CONN 9
 #define HP_THRESHOLD 25
+#define SEA_THRESH 18
 //FOR THE SHORTEST PATH
 int isUnique(int *arr, int obj);
 int shortestPath(DracView gameState, int sea, int dest, int *path);
 int sizePath( int src, int dest, LocationID *pathFound );
 int returnPath(int src, int dest, LocationID *pathFound, int *pathToAdd);
 int checkIfInTrail(DracView gameState, LocationID myLoc);
-int validateDest(Map map, LocationID *trail, LocationID dest);
+int validateDest(DracView gameState, LocationID *trail, LocationID dest, int sea);
+//Hunter getter functions
+int HuntInPath(DracView gameState, LocationID loc);
+int HuntHistory(DracView gameState, LocationID loc);
 //FOR THE MOVEMENT DECISION
 int checkPosInNTrail(LocationID loc);
+//If cannot find a good path check for Hides and double backs
+int chooseDB(DracView gameState, LocationID posChoice, LocationID *locs);
 
 void decideDraculaMove(DracView gameState)
 {
@@ -76,24 +82,36 @@ void decideDraculaMove(DracView gameState)
 
 		//GOTTA GO BACK TO THE CASTLE BOIS
 		LocationID locToGo[NUM_MAP_LOCATIONS];
+		/*If current health is greater than 75% of the threshold health then
+		use the sea or else don't*/
+		int sea = ((curHealth > SEA_THRESH && !isSea(myPos)) ? TRUE : FALSE);
 		// int trailLengthToGo = 0;
 		if ( myPos != CASTLE_DRACULA && curHealth <= HP_THRESHOLD ) {
-			printf("EXB\n");
-			shortestPath( gameState, TRUE, CASTLE_DRACULA, locToGo);
-			bestPos = locToGo[1];
+			printf("Shortest Path back to CASTLE_DRACULA\n");
+			int Tlength = shortestPath( gameState, sea, CASTLE_DRACULA, locToGo);
+			if ( Tlength > 0 ) {
+				for ( int x = 0; x < Tlength; x++ ) {
+					printf("\n[Pos]:%d->%s\n", x, idToName(locToGo[x]));
+				}
+				bestPos = locToGo[1];
+			} else bestPos = myPos;
 		} else {
-			printf("EXH\n");
-			int Tlength = shortestPath( gameState, TRUE, BORDEAUX, locToGo);
-			for ( int x = 0; x < Tlength; x++ ) {
-				printf("\n[Pos]:%d->%s\n", x, idToName(locToGo[x]));
-			}
-			bestPos = locToGo[1];
+			printf("\nShortest Path back to BORDEAUX\n");
+			printf("Checking sea [%s]\n", (sea == 1 ? "yes" : "no"));
+			int Tlength = shortestPath( gameState, sea, BORDEAUX, locToGo);
+			if ( Tlength > 0 ) {
+				for ( int x = 0; x < Tlength; x++ ) {
+					printf("\n[Pos]:%d->%s\n", x, idToName(locToGo[x]));
+				}
+				bestPos = locToGo[1];
+			} else bestPos = myPos;
 		}
 
 	}
 	printf("=============CURRENT STATS=============\n");
-	printf("\n[Registered Pos]->%s\n", idToName(bestPos));
-	printf("[HEALTH]: %d\n\n---------------------------------------\n", curHealth);
+	printf("\n[Registered Pos]->%s"":%s""\n", idToName(bestPos), idToAbbrev(bestPos));
+	printf("[HEALTH]: %d\n\
+[THRESH]: %d\n---------------------------------------\n", curHealth, SEA_THRESH);
 	registerBestPlay(idToAbbrev(bestPos),"lol");
 }
 //CHECK THE HARD CODED PATH
@@ -104,7 +122,7 @@ void decideDraculaMove(DracView gameState)
 // 		}
 // 		return x;
 // }
-
+//CHECKING IF IN THE HARD CODED POSITIONS
 int checkPosInNTrail(LocationID loc) {
 	int check;
 	LocationID nTrail[] = {UNKNOWN_LOCATION, MARSEILLES, MEDITERRANEAN_SEA,
@@ -114,18 +132,65 @@ int checkPosInNTrail(LocationID loc) {
 	}
 	return FALSE;
 }
-int validateDest(Map map, LocationID *trail, LocationID dest) {
+//IF WE HAVE TO DOUBLE BACK OR HIDE
+//Need to think about this function thoroughly
+/*Make sure there is no hunter on the trail and check if trail already has
+Double backs and hides*/
+int chooseDB(DracView gameState, LocationID posChoice, LocationID *locs) {
+	int numLocs = 0, pos;
+	LocationID trail[TRAIL_SIZE];
+	giveMeTheTrail(gameState, PLAYER_DRACULA, trail);
+	for ( pos = 0; pos < TRAIL_SIZE; pos++ ) {
+		if ( HuntInPath(gameState, posChoice) == FALSE ) {
+			locs[numLocs] = posChoice;
+			numLocs++;
+		}
+	}
+	return numLocs;
+}
+//MAKE SURE THE DESTINATION IS VALID
+//Additional things to worry about, hunter positions and if not sea
+int validateDest(DracView gameState, LocationID *trail, LocationID dest, int sea ) {
+	Map map = newMap();
 	if ( onTrail(trail, dest) ) {
+		int test; LocationID *check;
+		check = reachableLocations(map, &test, dest, FALSE, 0, TRUE, TRUE);
+		int col;
 		while( onTrail(trail, dest) ) {
-			int test = 0; LocationID *check; int *x = &test;
-			check = reachableLocations(map, x, dest, FALSE, 0, TRUE, TRUE);
-			int col;
-			for ( col = 0; col < *x; col++ ) {
-				if ( !onTrail(trail, check[col]) ) dest = check[col]; break;
+			for ( col = 0; col < test; col++ ) {
+				if ( !sea && isSea(check[col])) continue;
+				if ( !onTrail(trail, check[col]) && dest != check[col]) {
+					dest = check[col];
+					break;
+				}
 			}
 		}
 	}
+	free(map);
 	return dest;
+}
+//MAKE SURE THE HUNTER IS NOT IN THE PATH CHOSEN
+/*int onWhoseTrail( DracView currentView, LocationID *trail,
+    LocationID loc, PlayerID player );*/
+int HuntHistory(DracView gameState, LocationID loc) {
+	int chosenP, found = FALSE; LocationID ids[TRAIL_SIZE];
+	giveMeTheTrail(gameState, 3, ids);
+	for ( chosenP = 0; chosenP < NUM_PLAYERS - 1; chosenP++ ) {
+		found = onWhoseTrail( gameState, loc, chosenP );
+		if ( found == TRUE ) {
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+int HuntInPath(DracView gameState, LocationID loc) {
+	LocationID start, end; int pID;
+	for ( pID = 0; pID < NUM_PLAYERS; pID++ ) {
+		lastMove(gameState, pID, &start, &end);
+		if ( start == loc || end == loc ) return TRUE;
+	}
+	return FALSE;
 }
 //SHORTEST PATH
 int isUnique(int *arr, int obj) {
@@ -138,8 +203,6 @@ int isUnique(int *arr, int obj) {
 	}
 }
 
-
-//INCLUDES BOTH ROAD AND SEA CONNS
 int shortestPath(DracView gameState, int sea, int dest, int *path) {
 	//Intialise Everything needed i.e. Map, the curr Pos, and the trail
 	Map map = newMap();
@@ -147,10 +210,11 @@ int shortestPath(DracView gameState, int sea, int dest, int *path) {
 	int found = FALSE;
 	QHead dracQ = initQ();
 	addQ(dracQ, src);
-	LocationID vex[NUM_MAP_LOCATIONS], trail[TRAIL_SIZE]; //The set for vetex
-	giveMeTheTrail(gameState, PLAYER_DRACULA, trail); //Get Dracs trail
+	//The set for vertexes, vlad's trail, hunter trail
+	LocationID vex[NUM_MAP_LOCATIONS], trailV[TRAIL_SIZE];
+	giveMeTheTrail(gameState, PLAYER_DRACULA, trailV); //Get Dracs trail
 	//Check the destination is not in the path
-	dest = validateDest(map, trail, dest);
+	dest = validateDest(gameState, trailV, dest, sea);
 	//Initialise the vertex arrays
 	int i;
 	for( i = 0; i < NUM_MAP_LOCATIONS; i++ ) {
@@ -169,7 +233,8 @@ int shortestPath(DracView gameState, int sea, int dest, int *path) {
     for ( col = 0; col < *x; col++ ) {
 			//Need to work on this
 			if( isUnique(vex, check[col]) == FALSE ) continue;
-			if ( !onTrail(trail, check[col]) ) {
+			if( HuntInPath(gameState, check[col]) ) continue;
+			if ( !onTrail(trailV, check[col]) ) {
 				vex[check[col]] = toSearch;
 				addQ(dracQ, check[col]);
     		if( vex[dest] != -1 ) break;

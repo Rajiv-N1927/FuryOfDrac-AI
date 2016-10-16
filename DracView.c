@@ -76,7 +76,40 @@ void disposeDracView(DracView toBeDeleted)
 
 
 //// Functions to return simple information about the current state of the game
+int isHideInTrail(DracView currentView) {
+  LocationID trail[TRAIL_SIZE];
+  giveMeTheTrail(currentView, PLAYER_DRACULA, trail);
+  int curRound = giveMeTheRound(currentView);
+  int turnLength = 8;
+  int roundLength = turnLength*NUM_PLAYERS;
+  int i;
+  for ( i = 0; i < TRAIL_SIZE - 1; i++ ) {
+    if ( i >= curRound ) break;
+    if ( currentView->myTrail[curRound*roundLength - turnLength - i*roundLength + 1] == 'H' &&
+         currentView->myTrail[curRound*roundLength - turnLength - i*roundLength + 2] >= 'I' ) {
+         return TRUE;
+    }
+  }
+  return FALSE;
+}
 
+int isDBinTrail(DracView currentView) {
+  LocationID trail[TRAIL_SIZE];
+  giveMeTheTrail(currentView, PLAYER_DRACULA, trail);
+  int curRound = giveMeTheRound(currentView);
+  int turnLength = 8;
+  int roundLength = turnLength*NUM_PLAYERS;
+  int i;
+  for ( i = 0; i < TRAIL_SIZE - 1; i++ ) {
+    if ( i >= curRound ) break;
+    if ( currentView->myTrail[curRound*roundLength - turnLength - i*roundLength + 1] == 'D' &&
+         currentView->myTrail[curRound*roundLength - turnLength - i*roundLength + 2] >= '1' &&
+         currentView->myTrail[curRound*roundLength - turnLength - i*roundLength + 2] <= '5' ) {
+         return TRUE;
+    }
+  }
+  return FALSE;
+}
 // Get the current round
 Round giveMeTheRound(DracView currentView)
 {
@@ -163,7 +196,12 @@ int onTrail(LocationID *trail, LocationID loc)
         if (trail[i] == loc) return 1;
     return 0;
 }
-
+int onWhoseTrail( DracView currentView, LocationID loc, PlayerID player ) {
+  LocationID trail[TRAIL_SIZE];
+  giveMeTheTrail(currentView, player, trail);
+  if ( onTrail(trail, loc) ) return TRUE;
+  return FALSE;
+}
 // What are my (Dracula's) possible next moves (locations)
 LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int sea)
 {
