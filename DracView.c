@@ -77,38 +77,23 @@ void disposeDracView(DracView toBeDeleted)
 
 //// Functions to return simple information about the current state of the game
 int isHideInTrail(DracView currentView) {
+  int HI = FALSE, i;
   LocationID trail[TRAIL_SIZE];
-  giveMeTheTrail(currentView, PLAYER_DRACULA, trail);
-  int curRound = giveMeTheRound(currentView);
-  int turnLength = 8;
-  int roundLength = turnLength*NUM_PLAYERS;
-  int i;
-  for ( i = 0; i < TRAIL_SIZE - 1; i++ ) {
-    if ( i >= curRound ) break;
-    if ( currentView->myTrail[curRound*roundLength - turnLength - i*roundLength + 1] == 'H' &&
-         currentView->myTrail[curRound*roundLength - turnLength - i*roundLength + 2] >= 'I' ) {
-         return TRUE;
-    }
+  giveMeTheMoves(currentView, PLAYER_DRACULA, trail);
+  for ( i = 0; i < TRAIL_SIZE; i++ ) {
+    if ( trail[i] == HIDE ) HI = TRUE;
   }
-  return FALSE;
+  return HI;
 }
 
 int isDBinTrail(DracView currentView) {
+  int DB = FALSE, i;
   LocationID trail[TRAIL_SIZE];
-  giveMeTheTrail(currentView, PLAYER_DRACULA, trail);
-  int curRound = giveMeTheRound(currentView);
-  int turnLength = 8;
-  int roundLength = turnLength*NUM_PLAYERS;
-  int i;
-  for ( i = 0; i < TRAIL_SIZE - 1; i++ ) {
-    if ( i >= curRound ) break;
-    if ( currentView->myTrail[curRound*roundLength - turnLength - i*roundLength + 1] == 'D' &&
-         currentView->myTrail[curRound*roundLength - turnLength - i*roundLength + 2] >= '1' &&
-         currentView->myTrail[curRound*roundLength - turnLength - i*roundLength + 2] <= '5' ) {
-         return TRUE;
-    }
+  giveMeTheMoves(currentView, PLAYER_DRACULA, trail);
+  for ( i = 0; i < TRAIL_SIZE; i++ ) {
+    if ( trail[i] >= DOUBLE_BACK_1 && trail[i] <= DOUBLE_BACK_5 ) DB = TRUE;
   }
-  return FALSE;
+  return DB;
 }
 // Get the current round
 Round giveMeTheRound(DracView currentView)

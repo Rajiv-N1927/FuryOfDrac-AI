@@ -13,7 +13,7 @@
 #define SEA_THRESH 18
 //FOR THE SHORTEST PATH
 int isUnique(int *arr, int obj);
-int shortestPath(DracView gameState, int sea, int dest, int *path);
+int shortestPath(DracView gameState, int checkHunter, int sea, int dest, int *path);
 int sizePath( int src, int dest, LocationID *pathFound );
 int returnPath(int src, int dest, LocationID *pathFound, int *pathToAdd);
 int checkIfInTrail(DracView gameState, LocationID myLoc);
@@ -33,9 +33,9 @@ void decideDraculaMove(DracView gameState)
 	LocationID trail[TRAIL_SIZE];
 	giveMeTheTrail(gameState, me, trail);
 	LocationID myPos = whereIs(gameState, me);
-	for ( int x = 0; x < TRAIL_SIZE; x++ ) {
+	/*for ( int x = 0; x < TRAIL_SIZE; x++ ) {
 		printf("\n[Pos]:%d->%s\n", x, idToName(trail[x]) );
-	}
+	}*/
 	int curHealth = howHealthyIs(gameState, me);
 
 	if( curHealth >= HP_THRESHOLD && checkPosInNTrail(myPos) ) {
@@ -85,26 +85,38 @@ void decideDraculaMove(DracView gameState)
 		/*If current health is greater than 75% of the threshold health then
 		use the sea or else don't*/
 		int sea = ((curHealth > SEA_THRESH && !isSea(myPos)) ? TRUE : FALSE);
+		//Choose the position to go to
+		int gotoPos = ((curHealth <= HP_THRESHOLD) && myPos != CASTLE_DRACULA
+			? CASTLE_DRACULA : BORDEAUX);
 		// int trailLengthToGo = 0;
-		if ( myPos != CASTLE_DRACULA && curHealth <= HP_THRESHOLD ) {
-			printf("Shortest Path back to CASTLE_DRACULA\n");
-			int Tlength = shortestPath( gameState, sea, CASTLE_DRACULA, locToGo);
-			if ( Tlength > 0 ) {
-				for ( int x = 0; x < Tlength; x++ ) {
-					printf("\n[Pos]:%d->%s\n", x, idToName(locToGo[x]));
-				}
-				bestPos = locToGo[1];
-			} else bestPos = myPos;
+		printf("Shortest Path back to %s\n", idToName(gotoPos));
+		int Tlength = shortestPath( gameState, TRUE, sea, gotoPos, locToGo);
+		if ( Tlength > 0 ) {
+			for ( int x = 0; x < Tlength; x++ ) {
+				printf("\n[Pos]:%d->%s\n", x, idToName(locToGo[x]));
+			}
+		bestPos = locToGo[1];
 		} else {
-			printf("\nShortest Path back to BORDEAUX\n");
-			printf("Checking sea [%s]\n", (sea == 1 ? "yes" : "no"));
-			int Tlength = shortestPath( gameState, sea, BORDEAUX, locToGo);
+			int hide = isHideInTrail(gameState);
+			int DB   = isDBinTrail(gameState);
 			if ( Tlength > 0 ) {
 				for ( int x = 0; x < Tlength; x++ ) {
 					printf("\n[Pos]:%d->%s\n", x, idToName(locToGo[x]));
 				}
 				bestPos = locToGo[1];
-			} else bestPos = myPos;
+			} else {
+				int loc;
+				if ( !DB && !hide ) {
+					for ( loc = 0; loc < TRAIL_SIZE; loc++ ) {
+						if ( !HuntInPath(gameState, trail[loc]) ) {
+							if ( !hide && loc == 0 ) bestPos = HIDE;
+							else if ( !DB ) bestPos = DOUBLE_BACK_1 + loc;
+						}
+					}
+				} else {
+					//Absolutely no possible move either TP or goto a position where hunter is
+				}
+			}
 		}
 
 	}
@@ -150,7 +162,7 @@ int chooseDB(DracView gameState, LocationID posChoice, LocationID *locs) {
 }
 //MAKE SURE THE DESTINATION IS VALID
 //Additional things to worry about, hunter positions and if not sea
-int validateDest(DracView gameState, LocationID *trail, LocationID dest, int sea ) {
+int validateDest(DracView gameState, LocationID *trail, LocationID dest, int sea) {
 	Map map = newMap();
 	if ( onTrail(trail, dest) ) {
 		int test; LocationID *check;
@@ -186,7 +198,7 @@ int HuntHistory(DracView gameState, LocationID loc) {
 
 int HuntInPath(DracView gameState, LocationID loc) {
 	LocationID start, end; int pID;
-	for ( pID = 0; pID < NUM_PLAYERS; pID++ ) {
+	for ( pID = 0; pID < NUM_PLAYERS - 1; pID++ ) {
 		lastMove(gameState, pID, &start, &end);
 		if ( start == loc || end == loc ) return TRUE;
 	}
@@ -203,7 +215,7 @@ int isUnique(int *arr, int obj) {
 	}
 }
 
-int shortestPath(DracView gameState, int sea, int dest, int *path) {
+int shortestPath(DracView gameState, int checkHunter, int sea, int dest, int *path) {
 	//Intialise Everything needed i.e. Map, the curr Pos, and the trail
 	Map map = newMap();
 	int src = whereIs(gameState, PLAYER_DRACULA);
@@ -233,7 +245,7 @@ int shortestPath(DracView gameState, int sea, int dest, int *path) {
     for ( col = 0; col < *x; col++ ) {
 			//Need to work on this
 			if( isUnique(vex, check[col]) == FALSE ) continue;
-			if( HuntInPath(gameState, check[col]) ) continue;
+			if( checkHunter && HuntInPath(gameState, check[col]) ) continue;
 			if ( !onTrail(trailV, check[col]) ) {
 				vex[check[col]] = toSearch;
 				addQ(dracQ, check[col]);
